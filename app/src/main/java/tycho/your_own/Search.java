@@ -1,10 +1,12 @@
 package tycho.your_own;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Search extends AppCompatActivity {
 
@@ -35,14 +38,27 @@ public class Search extends AppCompatActivity {
 
     private Button searchBtn;
 
-    private MyCustomAdapter adapter;
+    private SecondCustomAdapter adapter;
 
     private ArrayList<String> titles = new ArrayList<>();
+    private ArrayList<String> authors = new ArrayList<String>();
+    private ArrayList<String> descriptions = new ArrayList<String>();
+
+    private FirebaseDatabase database;
+
+    private DatabaseReference myRef;
+
+    private ListView lv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        lv = (ListView)findViewById(R.id.list2);
+
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("ToRead");
 
         text = (EditText)findViewById(R.id.editText);
 
@@ -56,32 +72,38 @@ public class Search extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                titles.clear();
+                authors.clear();
+                descriptions.clear();
+
+
                 String searchItem = text.getText().toString();
                 searchItem = searchItem.replace(" ", "+");
                 GetURL geturl = new GetURL();
                 geturl.execute(searchItem);
 
-                ListView lv = (ListView)findViewById(R.id.list2);
-                adapter = new MyCustomAdapter(titles, getApplicationContext());
-                adapter.notifyDataSetChanged();
+                adapter = new SecondCustomAdapter(titles, authors, descriptions, getApplicationContext());
                 lv.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
 
                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        FirebaseDatabase database = FirebaseDatabase.getInstance();
-                        DatabaseReference myRef = database.getReference("Books");
-
-                        String book = titles.get(position);
-                        myRef.setValue(book);
-                        Toast toast = Toast.makeText(getApplicationContext(), "Book Added To Read List", Toast.LENGTH_SHORT);
-                        toast.show();
+                        addToDatabase(position);
                     }
                 });
 
             }
         });
 
+    }
+
+    public void addToDatabase(int position){
+
+        String book = titles.get(position);
+        myRef.push().setValue(book);
+        Toast toast = Toast.makeText(getApplicationContext(), "Book Added To Read List", Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     class GetURL extends AsyncTask<String, Void, String> {
@@ -163,14 +185,29 @@ public class Search extends AppCompatActivity {
                 }
 
                 String title = "";
+                String authorsArray = "";
+                String description = "";
                 try {
                     JSONObject jObject = new JSONObject(volumeinfo);
                     title = jObject.getString("title");
+                    authorsArray = jObject.getString("authors");
+                    description = jObject.getString("description");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                String author = "";
+                try {
+                    JSONArray jsonArray = new JSONArray(authorsArray);
+                    author = jsonArray.getString(0);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 titles.add(title);
+                descriptions.add(description);
+                authors.add(author);
+
             }
 
             if(titles.size() == 0){

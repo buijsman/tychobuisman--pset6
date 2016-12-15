@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:hint="Book Title or Author"
+        android:hint="Book Title"
         android:ems="10"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
@@ -33,10 +33,10 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/button2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/list2"/>
+        android:id="@+id/list2"
+        android:layout_below="@+id/empty" />
 
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"
@@ -49,5 +49,16 @@
         android:layout_marginEnd="15dp"
         android:id="@+id/progressBar2"
         android:visibility="invisible"/>
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search for a book title and click on it to add the book to your 'To Read' list"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        android:layout_below="@+id/editText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

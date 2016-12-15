@@ -20,11 +20,22 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/list"
+        android:layout_marginTop="212dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/logoutButton"
-        android:id="@+id/list"/>
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="You Have Read 0 Books"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="95dp"
+        android:id="@+id/textView2"
+        android:textSize="30dp"
+        android:textStyle="bold"/>
 
 </RelativeLayout>

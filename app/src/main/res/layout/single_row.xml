@@ -8,8 +8,6 @@
         android:layout_width="225dp"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         android:layout_gravity="left"
         android:id="@+id/list_item_string" />
 

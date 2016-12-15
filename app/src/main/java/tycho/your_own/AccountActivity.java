@@ -1,6 +1,8 @@
 package tycho.your_own;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,8 +10,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -25,6 +33,10 @@ public class AccountActivity extends AppCompatActivity {
     private ListView lv;
 
     private MyCustomAdapter adapter;
+
+    private TextView ReadBooks;
+
+    private ArrayList<String> titles = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +63,7 @@ public class AccountActivity extends AppCompatActivity {
                     startActivity(new Intent(getApplicationContext(), ToRead.class));
                 }
                 if(position == 2){
-                    //startActivity(new Intent(getApplicationContext(),ReadBooks.class));
+                    startActivity(new Intent(getApplicationContext(),Read.class));
                 }
             }
         });
@@ -75,6 +87,47 @@ public class AccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mAuth.signOut();
+            }
+        });
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = database.getReference("Read");
+
+        myRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String value = dataSnapshot.getValue(String.class);
+                titles.add(value);
+                ReadBooks = (TextView)findViewById(R.id.textView2);
+                int books = titles.size();
+                String text = "";
+                if(books == 1){
+                    text = "You Have Read 1 Book!";
+                }
+                else{
+                    text = "You Have Read " + books + " Books!";
+                }
+                ReadBooks.setText(text);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
 

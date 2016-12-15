@@ -1,10 +1,7 @@
 package tycho.your_own;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -14,32 +11,29 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Map;
 
-public class ToRead extends AppCompatActivity {
-
-    private MyCustomAdapter adapter;
+public class Read extends AppCompatActivity {
 
     private ArrayList<String> titles = new ArrayList<>();
+
+    private MyCustomAdapter adapter;
 
     private ArrayList<String> keys = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_to_read);
+        setContentView(R.layout.activity_read);
 
-        ListView lv = (ListView)findViewById(R.id.list3);
+        ListView lv = (ListView)findViewById(R.id.list4);
         adapter = new MyCustomAdapter(titles, getApplicationContext());
         lv.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference("ToRead");
-        final DatabaseReference secondRef = database.getReference("Read");
+        final DatabaseReference myRef = database.getReference("Read");
 
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -75,9 +69,6 @@ public class ToRead extends AppCompatActivity {
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                String book = titles.get(position);
-                secondRef.push().setValue(book);
-
                 String _id = keys.get(position);
                 myRef.child(_id).setValue(null);
                 titles.remove(position);
@@ -85,7 +76,6 @@ public class ToRead extends AppCompatActivity {
                 return false;
             }
         });
+
     }
 }
-
-
