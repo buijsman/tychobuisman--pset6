@@ -15,7 +15,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AccountActivity"></activity>
+        <activity android:name=".AccountActivity" />
+        <activity android:name=".Search" />
+        <activity android:name=".ToRead"></activity>
     </application>
 
 </manifest>

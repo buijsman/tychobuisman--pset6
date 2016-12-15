@@ -13,6 +13,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,7 +69,13 @@ public class Search extends AppCompatActivity {
                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference myRef = database.getReference("Books");
 
+                        String book = titles.get(position);
+                        myRef.setValue(book);
+                        Toast toast = Toast.makeText(getApplicationContext(), "Book Added To Read List", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 });
 
@@ -107,6 +116,10 @@ public class Search extends AppCompatActivity {
                     }
                     br.close();
                     result = sb.toString();
+                }
+                else{
+                    Toast toast = Toast.makeText(getApplicationContext(), "Could Not Retrieve Data", Toast.LENGTH_SHORT);
+                    toast.show();
                 }
 
             } catch (MalformedURLException e) {
