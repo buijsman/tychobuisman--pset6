@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +23,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 public class AccountActivity extends AppCompatActivity {
+
+    // defining
     private Button mLogOutBtn;
 
     private FirebaseAuth mAuth;
@@ -38,10 +41,25 @@ public class AccountActivity extends AppCompatActivity {
 
     private ArrayList<String> titles = new ArrayList<>();
 
+    private String uid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
+
+        // retrieve used id
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            uid = user.getUid();
+
+            SharedPreferences sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+
+            // save user id for furhter purpose
+            editor.putString("userID", uid);
+            editor.commit();
+        }
 
         // populate list view
         items.add("Search");
@@ -53,6 +71,7 @@ public class AccountActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         lv.setAdapter(adapter);
 
+        // on item click go to the assigned activity
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -90,21 +109,30 @@ public class AccountActivity extends AppCompatActivity {
             }
         });
 
+        // retrieve the amount of read books from the database and set the text "you have read ... books!"
+        titles.clear();
+        // get database reference to read books
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference("Read");
+        DatabaseReference userRef = database.getReference(uid);
 
-        myRef.addChildEventListener(new ChildEventListener() {
+        userRef.child("Read").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                // add all books to the array list
                 String value = dataSnapshot.getValue(String.class);
                 titles.add(value);
                 ReadBooks = (TextView)findViewById(R.id.textView2);
+
+                // get the size of the array list and set the text
                 int books = titles.size();
                 String text = "";
+                if(books == 0){
+                    text = "You Have Read 0 Books :(";
+                }
                 if(books == 1){
                     text = "You Have Read 1 Book!";
                 }
-                else{
+                if(books > 1){
                     text = "You Have Read " + books + " Books!";
                 }
                 ReadBooks.setText(text);

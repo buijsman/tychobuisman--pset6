@@ -11,7 +11,7 @@
     tools:context="tycho.your_own.ToRead">
 
     <TextView
-        android:text="This is your To Read list. By long clicking a book you add it to your read list!"
+        android:text="This is your To Read list. By long clicking a book you add it to your read list! And click on it to see more details."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"

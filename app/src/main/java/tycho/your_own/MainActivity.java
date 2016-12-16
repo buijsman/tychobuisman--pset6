@@ -1,3 +1,8 @@
+// Tycho Buisman - pset6
+// 10773584
+// My own app, search for books and add them to your to "to read" list. After reading them add them to your "read" list.
+// This app implements the google books api and uses the firebase database to store data
+
 package tycho.your_own;
 
 import android.content.Intent;
@@ -23,11 +28,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity {
+    // defining
+
     private SignInButton mGoogleBtn;
+
     private GoogleApiClient mGoogleApiClient;
+
     private FirebaseAuth mAuth;
+
     private FirebaseAuth.AuthStateListener mAuthListener;
+
     private static final int RC_SIGN_IN = 1;
+
     private static final String TAG = "MAIN_ACTIVITY";
 
     @Override
@@ -35,16 +47,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // when user is logged in, go to next activity
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(firebaseAuth.getCurrentUser() != null){
                   startActivity(new Intent(MainActivity.this, AccountActivity.class));
+                  finish();
                 }
             }
         };
 
+        // handle the google sign in
         mGoogleBtn = (SignInButton)findViewById(R.id.sign_in_button);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -72,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // google sign in functions
     @Override
     protected void onStart() {
         super.onStart();
@@ -96,8 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-                // Google Sign In failed, update UI appropriately
-                // ...
+                // Google Sign In failed
             }
         }
     }
